@@ -276,6 +276,152 @@
 						{include file='_ads.tpl' _ads=$ads_master['header'] _master=true}
 						<!-- ads -->
 
+						{* Homepage Groups Carousel *}
+						{if $page == "index"}
+						  <style>
+						    .x-groups-carousel { margin: 12px 12px 0 12px; }
+						    .x-groups-carousel .xgc-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+						    .x-groups-carousel .xgc-title { font-weight: 700; font-size: 18px; }
+						    .x-groups-carousel .xgc-controls { display: flex; gap: 6px; }
+						    .x-groups-carousel .xgc-btn { appearance: none; border: 1px solid var(--xgc-btn-border, rgba(0,0,0,0.15)); background: var(--xgc-btn-bg, rgba(0,0,0,0.04)); color: inherit; border-radius: 10px; padding: 6px 10px; line-height: 1; cursor: pointer; }
+						    .x-groups-carousel .xgc-btn:hover { background: var(--xgc-btn-bg-hover, rgba(0,0,0,0.07)); }
+						    .x-groups-carousel .xgc-viewport { position: relative; }
+						    .x-groups-carousel .xgc-track { display: grid; grid-auto-flow: column; grid-auto-columns: clamp(140px, 28vw, 200px); gap: 12px; overflow-x: auto; padding: 6px 2px 6px 2px; scroll-snap-type: x mandatory; scrollbar-width: thin; }
+						    .x-groups-carousel .xgc-track::-webkit-scrollbar { height: 8px; }
+						    .x-groups-carousel .xgc-track::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25); border-radius: 8px; }
+						    .x-groups-carousel .xgc-item { scroll-snap-align: start; background: var(--xgc-item-bg, rgba(0,0,0,0.03)); border: 1px solid var(--xgc-item-border, rgba(0,0,0,0.08)); border-radius: 12px; overflow: hidden; text-decoration: none; color: inherit; display: flex; flex-direction: column; min-height: 170px; }
+						    .x-groups-carousel .xgc-cover { position: relative; aspect-ratio: 16/9; background: #e5e7eb; display: block; overflow: hidden; }
+						    .x-groups-carousel .xgc-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+						    .x-groups-carousel .xgc-body { padding: 10px; display: flex; align-items: center; gap: 8px; }
+						    .x-groups-carousel .xgc-avatar { width: 36px; height: 36px; border-radius: 10px; background: #d1d5db; flex: 0 0 auto; overflow: hidden; }
+						    .x-groups-carousel .xgc-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+						    .x-groups-carousel .xgc-name { font-weight: 600; font-size: 14px; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+						    .x-groups-carousel .xgc-meta { font-size: 12px; opacity: 0.8; }
+						    .x-groups-carousel .xgc-skeleton { animation: xgcPulse 1.4s ease-in-out infinite; background: linear-gradient(90deg, rgba(0,0,0,0.05), rgba(0,0,0,0.09), rgba(0,0,0,0.05)); background-size: 200% 100%; }
+						    @keyframes xgcPulse { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+						    @media (min-width: 768px) { .x-groups-carousel { margin: 16px 16px 0 16px; } .x-groups-carousel .xgc-title { font-size: 20px; } }
+						  </style>
+
+						  <section class="x-groups-carousel" aria-label="Группы">
+						    <div class="xgc-header">
+						      <div class="xgc-title">{__("Группы")}</div>
+						      <div class="xgc-controls" role="group" aria-label="Навигация по карусели групп">
+						        <button type="button" class="xgc-btn" data-action="prev" aria-label="Прокрутить влево">⟨</button>
+						        <button type="button" class="xgc-btn" data-action="next" aria-label="Прокрутить вправо">⟩</button>
+						      </div>
+						    </div>
+						    <div class="xgc-viewport">
+						      <div id="groups-carousel-track" class="xgc-track" role="list" data-fetch-url="{$system['system_url']}/api/groups?limit=20">
+						        {** Skeleton placeholders while loading **}
+						        {section name=i loop=8}
+						          <div class="xgc-item" role="listitem" aria-hidden="true">
+						            <div class="xgc-cover xgc-skeleton"></div>
+						            <div class="xgc-body">
+						              <div class="xgc-avatar xgc-skeleton"></div>
+						              <div style="flex:1; display:flex; flex-direction:column; gap:6px;">
+						                <div class="xgc-skeleton" style="height:12px; border-radius:6px;"></div>
+						                <div class="xgc-skeleton" style="height:10px; width:60%; border-radius:6px;"></div>
+						              </div>
+						            </div>
+						          </div>
+						        {/section}
+						      </div>
+						    </div>
+						  </section>
+
+						  <script>
+						  (function () {
+						    function qs(sel, root) { return (root || document).querySelector(sel); }
+						    function qsa(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+						    function scrollByAmount(track, amount) { try { track.scrollBy({ left: amount, behavior: 'smooth' }); } catch (e) { track.scrollLeft += amount; } }
+						    function buildItem(group) {
+						      var url = group.url || ('{$system['system_url']}/groups/' + encodeURIComponent(group.username || group.id || ''));
+						      var cover = group.cover || group.picture || '';
+						      var avatar = group.picture || cover || '';
+						      var name = group.name || group.title || '';
+						      var members = (group.members_count != null ? group.members_count : group.members) || '';
+						      var item = document.createElement('a');
+						      item.className = 'xgc-item';
+						      item.href = url;
+						      item.setAttribute('role', 'listitem');
+						      item.innerHTML = '\n' +
+						        '  <span class="xgc-cover">' + (cover ? ('<img src="' + cover.replace(/"/g, '&quot;') + '" alt="">') : '') + '</span>\n' +
+						        '  <div class="xgc-body">\n' +
+						        '    <span class="xgc-avatar">' + (avatar ? ('<img src="' + avatar.replace(/"/g, '&quot;') + '" alt="">') : '') + '</span>\n' +
+						        '    <span style="display:flex; flex-direction:column; min-width:0;">\n' +
+						        '      <span class="xgc-name" title="' + (name || '') + '">' + (name || '{__("Группа")}') + '</span>\n' +
+						        '      <span class="xgc-meta">' + (members ? String(members) + ' {__("участников")}' : '') + '</span>\n' +
+						        '    </span>\n' +
+						        '  </div>';
+						      return item;
+						    }
+
+						    function normalizeGroups(data) {
+						      if (!data) return [];
+						      if (Array.isArray(data)) return data;
+						      if (data.groups && Array.isArray(data.groups)) return data.groups;
+						      if (data.data && Array.isArray(data.data)) return data.data;
+						      return [];
+						    }
+
+						    function renderGroups(track, groups) {
+						      if (!track) return;
+						      track.innerHTML = '';
+						      var limited = groups.slice(0, 20);
+						      limited.forEach(function (g) { track.appendChild(buildItem(g)); });
+						    }
+
+						    function tryFetch(url) {
+						      if (!url) return Promise.reject(new Error('no-url'));
+						      var controller = null;
+						      try { controller = new AbortController(); } catch (e) {}
+						      var opts = controller ? { signal: controller.signal, credentials: 'same-origin' } : { credentials: 'same-origin' };
+						      return fetch(url, opts).then(function (r) { if (!r.ok) throw new Error('status ' + r.status); return r.json(); });
+						    }
+
+						    function initCarousel() {
+						      var track = qs('#groups-carousel-track');
+						      if (!track) return;
+						      var controls = qsa('.xgc-btn', track.closest('.x-groups-carousel'));
+						      controls.forEach(function (btn) {
+						        btn.addEventListener('click', function () {
+						          var dir = btn.getAttribute('data-action');
+						          var amount = (dir === 'prev') ? -Math.max(track.clientWidth * 0.9, 240) : Math.max(track.clientWidth * 0.9, 240);
+						          scrollByAmount(track, amount);
+						        });
+						      });
+
+						      var preloaded = (window.HOME_GROUPS || window.__GROUPS__ || window.__HOME_GROUPS__);
+						      if (Array.isArray(preloaded) && preloaded.length) {
+						        renderGroups(track, preloaded);
+						        return;
+						      }
+
+						      var primaryUrl = track.getAttribute('data-fetch-url');
+						      var fallbacks = [
+						        '{$system['system_url']}/groups?output=json',
+						        '{$system['system_url']}/api/v1/groups?limit=20',
+						      ];
+
+						      var chain = Promise.resolve();
+						      var tried = [];
+						      [primaryUrl].concat(fallbacks).forEach(function (u) {
+						        if (!u) return;
+						        chain = chain.catch(function () { tried.push(u); return tryFetch(u); });
+						      });
+
+						      chain
+						        .then(function (json) { var groups = normalizeGroups(json); if (!groups.length) throw new Error('empty'); renderGroups(track, groups); })
+						        .catch(function () { /* leave skeletons or hide if desired */ });
+						    }
+
+						    if (document.readyState === 'loading') {
+						      document.addEventListener('DOMContentLoaded', initCarousel);
+						    } else { initCarousel(); }
+						  })();
+						  </script>
+						{/if}
+
 						<script>
 (function () {
   const onDomReady = () => {
