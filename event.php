@@ -75,11 +75,11 @@ try {
   if ($event['event_privacy'] == "closed") {
     if (!$event['i_joined'] && !$event['i_admin']) {
       if (!$user->_is_admin && !$user->_is_moderator) {
-        $_GET['view'] = 'about';
+        $view = 'about';
       }
     }
   }
-  switch ($_GET['view']) {
+  switch ($view) {
     case '':
       /* get custom fields */
       $smarty->assign('custom_fields', $user->get_custom_fields(["for" => "event", "get" => "profile", "node_id" => $event['event_id']]));
@@ -106,7 +106,7 @@ try {
         $smarty->assign('videos_categories', $user->get_categories("posts_videos_categories"));
       }
       /* check if there is share URL */
-      if ($_GET['url']) {
+      if (!empty($_GET['url'])) {
         $smarty->assign('url', $_GET['url']);
       }
 
@@ -303,7 +303,7 @@ page_header($event['event_title'], $event['event_description'], $event['event_co
 
 // assign variables
 $smarty->assign('event', $event);
-$smarty->assign('view', $_GET['view']);
+$smarty->assign('view', $view);
 
 // page footer
 page_footer('event');

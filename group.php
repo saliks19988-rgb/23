@@ -88,17 +88,17 @@ try {
       }
     }
     if ($group['i_joined'] != "approved" && $group['i_invited']) {
-      $_GET['view'] = 'members';
+      $view = 'members';
     }
   }
   if ($group['group_privacy'] == "closed") {
     if ($group['i_joined'] != "approved" && !$group['i_admin']) {
       if (!$user->_is_admin && !$user->_is_moderator) {
-        $_GET['view'] = 'members';
+        $view = 'members';
       }
     }
   }
-  switch ($_GET['view']) {
+  switch ($view) {
     case '':
       /* get custom fields */
       $smarty->assign('custom_fields', $user->get_custom_fields(["for" => "group", "get" => "profile", "node_id" => $group['group_id']]));
@@ -142,7 +142,7 @@ try {
         $smarty->assign('videos_categories', $user->get_categories("posts_videos_categories"));
       }
       /* check if there is share URL */
-      if ($_GET['url']) {
+      if (!empty($_GET['url'])) {
         $smarty->assign('url', $_GET['url']);
       }
 
@@ -376,7 +376,7 @@ page_header($group['group_title'], $group['group_description'], $group['group_pi
 
 // assign variables
 $smarty->assign('group', $group);
-$smarty->assign('view', $_GET['view']);
+$smarty->assign('view', $view);
 
 // page footer
 page_footer('group');

@@ -84,7 +84,7 @@ try {
 
 
   // [2] get view content
-  switch ($_GET['view']) {
+  switch ($view) {
     case '':
       /* get custom fields */
       $smarty->assign('custom_fields', $user->get_custom_fields(["for" => "page", "get" => "profile", "node_id" => $spage['page_id']]));
@@ -121,7 +121,7 @@ try {
         $smarty->assign('videos_categories', $user->get_categories("posts_videos_categories"));
       }
       /* check if there is share URL */
-      if ($_GET['url']) {
+      if (!empty($_GET['url'])) {
         $smarty->assign('url', $_GET['url']);
       }
 
@@ -361,7 +361,7 @@ page_header($spage['page_title'], $spage['page_description'], $spage['page_pictu
 
 // assign variables
 $smarty->assign('spage', $spage);
-$smarty->assign('view', $_GET['view']);
+$smarty->assign('view', $view);
 
 // page footer
 page_footer('page');

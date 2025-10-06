@@ -90,7 +90,7 @@ try {
     $smarty->assign('announcements', $user->get_announcements());
 
     // get view content
-    switch ($_GET['view']) {
+    switch ($view) {
       case '':
         // page header
         page_header(__($system['system_title']));
@@ -472,7 +472,7 @@ try {
         break;
     }
     /* assign variables */
-    $smarty->assign('view', $_GET['view']);
+    $smarty->assign('view', $view);
 
 
     /* get the merits balance (if enabled) */

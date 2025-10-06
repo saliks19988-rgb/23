@@ -30,10 +30,10 @@ if ($user->_is_moderator && !$moderator_mode) {
 try {
 
   // get view content
-  switch ($_GET['view']) {
+  switch ($view) {
     case '':
-      // update view
-      $_GET['view'] = 'dashboard';
+      // default to dashboard view (no mutation of superglobal)
+      $view = 'dashboard';
 
       // page header
       page_header($control_panel['title'] . " " . __("Panel"));
@@ -4785,7 +4785,7 @@ try {
       _error(404);
   }
   /* assign variables */
-  $smarty->assign('view', $_GET['view']);
+  $smarty->assign('view', $view);
   $smarty->assign('sub_view', $_GET['sub_view']);
   $smarty->assign('control_panel', $control_panel);
 

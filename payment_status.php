@@ -18,8 +18,8 @@ if (!isset($_GET['view']) || !in_array($_GET['view'], ['pending', 'failure'])) {
   _error(404);
 }
 
-// assign varible
-$smarty->assign('view', $_GET['view']);
+// assign variable
+$smarty->assign('view', $view);
 
 // page footer
 page_footer('payment_status');

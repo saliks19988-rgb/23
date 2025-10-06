@@ -23,7 +23,7 @@ if ($user->_logged_in || !$system['system_public']) {
 try {
 
   // get view content
-  switch ($_GET['view']) {
+  switch ($view) {
     case '':
       // page header
       page_header(__("Blogs") . ' | ' . __($system['system_title']), __($system['system_description_blogs']));
@@ -37,7 +37,7 @@ try {
       }
 
       // get blogs
-      $smarty->assign('blogs', $user->get_blogs(['country' => $selected_country['country_id']]));
+      $smarty->assign('blogs', $user->get_blogs(['country' => ($selected_country['country_id'] ?? null)]));
       break;
 
     case 'category':
@@ -61,7 +61,7 @@ try {
       }
 
       // get blogs
-      $smarty->assign('blogs', $user->get_blogs(["category" => $_GET['category_id'], 'country' => $selected_country['country_id']]));
+      $smarty->assign('blogs', $user->get_blogs(["category" => $_GET['category_id'], 'country' => ($selected_country['country_id'] ?? null)]));
 
       // get blogs categories (sub-categories & only parents)
       $smarty->assign('blogs_categories', $user->get_categories("blogs_categories", $_GET['category_id'], false, true));
@@ -171,7 +171,7 @@ try {
       break;
   }
   /* assign variables */
-  $smarty->assign('view', $_GET['view']);
+  $smarty->assign('view', $view);
 } catch (Exception $e) {
   _error(__("Error"), $e->getMessage());
 }

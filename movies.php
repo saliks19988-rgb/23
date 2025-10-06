@@ -23,8 +23,7 @@ if ($user->_logged_in || !$system['system_public']) {
 try {
 
   // get view content
-  $_GET['view'] = (isset($_GET['view'])) ? $_GET['view'] : '';
-  switch ($_GET['view']) {
+  switch ($view) {
     case '':
       // prepare query
       /* prepare where query */
@@ -98,7 +97,7 @@ try {
       break;
   }
 
-  if ($_GET['view'] != "movie") {
+  if ($view != "movie") {
     // prepare pager
     require('includes/class-pager.php');
     $params['selected_page'] = (!isset($_GET['page']) || (int) $_GET['page'] == 0) ? 1 : $_GET['page'];
@@ -130,7 +129,7 @@ try {
   }
 
   // assign view
-  $smarty->assign('view', $_GET['view']);
+  $smarty->assign('view', $view);
 
   // get movies genres
   $genres = $user->get_movies_genres();
