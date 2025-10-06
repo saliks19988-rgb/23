@@ -3,7 +3,25 @@
 {else}
     <body data-hash-tok="{$session_hash['token']}" data-hash-pos="{$session_hash['position']}" data-chat-enabled="{$user->_data['user_chat_enabled']}" {if $system['theme_mode_night']}data-bs-theme="dark" {/if} class="{if $system['theme_mode_night']}night-mode{/if} {if !$system['chat_enabled'] || $user->_data['user_privacy_chat'] == "me"}n_chat{/if}{if $system['activation_enabled'] && !$system['activation_required'] && !$user->_data['user_activated']} n_activated{/if}{if !$system['system_live']} n_live{/if}" {if $page == 'profile' && $system['system_profile_background_enabled'] && $profile['user_profile_background']}style="background: url({$profile['user_profile_background']}) fixed !important; background-size: 100% auto;" {/if} {if $url}onload="initialize_scraper()" {/if}>
     {/if}
-		<!-- main wrapper -->
+        <!-- global preloader -->
+        <style>
+          .x-preloader { position: fixed; inset: 0; z-index: 20000; display: flex; align-items: center; justify-content: center; }
+          .x-preloader.hidden { display: none !important; }
+          .x-preloader .x-preloader-backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.35); backdrop-filter: blur(2px); }
+          .x-preloader .x-preloader-content { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 16px; border-radius: 12px; }
+          .x-preloader .x-spinner { width: 56px; height: 56px; border: 4px solid rgba(255, 255, 255, 0.25); border-top-color: #ffffff; border-radius: 50%; animation: x-preloader-spin 1s linear infinite; }
+          .x-preloader .x-preloader-text { color: #ffffff; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
+          @keyframes x-preloader-spin { to { transform: rotate(360deg); } }
+        </style>
+        <div id="global-preloader" class="x-preloader hidden" aria-live="polite" aria-busy="true" role="status">
+          <div class="x-preloader-backdrop"></div>
+          <div class="x-preloader-content">
+            <div class="x-spinner"></div>
+            <div class="x-preloader-text">{__("Загрузка...")}</div>
+          </div>
+        </div>
+        <!-- global preloader -->
+        <!-- main wrapper -->
 		<div class="main-wrapper">
 			{if $user->_logged_in && $system['activation_enabled'] && !$system['activation_required'] && !$user->_data['user_activated']}
 				<!-- top-bar -->
@@ -384,6 +402,24 @@
 
   window.logout = function logout() {
     window.location.href = '{$system["system_url"]}/sign/?do=signout';
+  };
+  
+  window.showPreloader = function showPreloader(message) {
+    var preloader = document.getElementById('global-preloader');
+    if (!preloader) return;
+    var textEl = preloader.querySelector('.x-preloader-text');
+    if (message && textEl) {
+      try { textEl.textContent = String(message); } catch (e) {}
+    }
+    preloader.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.hidePreloader = function hidePreloader() {
+    var preloader = document.getElementById('global-preloader');
+    if (!preloader) return;
+    preloader.classList.add('hidden');
+    document.body.style.overflow = '';
   };
 })();
 						</script>
