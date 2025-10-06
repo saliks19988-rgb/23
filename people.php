@@ -16,7 +16,7 @@ user_access();
 try {
 
   // get view content
-  switch ($_GET['view']) {
+  switch ($view) {
     case '':
       // page header
       page_header(__("Discover People") . ' | ' . __($system['system_title']));
@@ -75,7 +75,7 @@ try {
       break;
   }
   /* assign variables */
-  $smarty->assign('view', $_GET['view']);
+  $smarty->assign('view', $view);
 
   // get total friend requests sent
   $user->_data['friend_requests_sent_total'] = $user->get_friend_requests_sent_total();

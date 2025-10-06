@@ -21,7 +21,7 @@ user_access(false, true);
 try {
 
   // get view content
-  switch ($_GET['view']) {
+  switch ($view) {
     case '':
       // page header
       page_header(__("Settings") . " &rsaquo; " . __("Account Settings"));
@@ -664,7 +664,7 @@ try {
   $smarty->assign('custom_fields', $user->get_custom_fields(["for" => "user", "get" => "settings", "node_id" => $user->_data['user_id']]));
 
   /* assign variables */
-  $smarty->assign('view', $_GET['view']);
+  $smarty->assign('view', $view);
   $smarty->assign('sub_view', $_GET['sub_view']);
 } catch (Exception $e) {
   _error(__("Error"), $e->getMessage());

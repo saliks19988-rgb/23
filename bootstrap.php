@@ -27,12 +27,23 @@ require(ABSPATH . 'includes/functions.php');
 // check config file
 if (!file_exists(ABSPATH . 'includes/config.php')) {
   /* the config file doesn't exist -> start the installer */
-  header('Location: ./install');
+  header('Location: ./install/');
+  exit();
 }
 
 
 // get config file
 require(ABSPATH . 'includes/config.php');
+
+// initialize commonly used globals to avoid notices and ensure consistency
+// these variables are referenced across controllers without prior definition
+// keep them nullable by default and populate on demand in pages
+$countries = $countries ?? null;
+$selected_country = $selected_country ?? null;
+$distance = $distance ?? null;
+
+// sanitize common request parameter 'view' without mutating superglobals
+$view = isset($_GET['view']) ? trim((string) $_GET['view']) : '';
 
 
 // set debugging settings

@@ -23,8 +23,7 @@ if ($user->_logged_in || !$system['system_public']) {
 try {
 
   // get view content
-  $_GET['view'] = (isset($_GET['view'])) ? $_GET['view'] : '';
-  switch ($_GET['view']) {
+  switch ($view) {
     case '':
       // get promoted products
       $promoted_products = [];
@@ -178,7 +177,7 @@ try {
       break;
   }
   /* assign variables */
-  $smarty->assign('view', $_GET['view']);
+  $smarty->assign('view', $view);
 
   // get view contnet (common)
   if (in_array($view, ['', 'search', 'category'])) {

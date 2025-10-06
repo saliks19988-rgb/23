@@ -21,7 +21,7 @@ user_access(false, true);
 try {
 
   // get view content
-  switch ($_GET['view']) {
+  switch ($view) {
     case '':
       // page header
       page_header(__("Wallet") . ' | ' . __($system['system_title']));
@@ -126,7 +126,7 @@ try {
       break;
   }
   /* assign variables */
-  $smarty->assign('view', $_GET['view']);
+  $smarty->assign('view', $view);
 } catch (Exception $e) {
   _error(__("Error"), $e->getMessage());
 }

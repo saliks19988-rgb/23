@@ -9,18 +9,24 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libzip-dev \
     unzip \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd zip mysqli \
-    && docker-php-ext-enable mysqli zip
+ && docker-php-ext-configure gd --with-freetype --with-jpeg \
+ && docker-php-ext-install -j"$(nproc)" gd zip mysqli \
+ && docker-php-ext-enable mysqli zip opcache
 
-# enable mysqli
-RUN docker-php-ext-install mysqli && docker-php-ext-enable mysqli
+# enable recommended PHP production settings via opcache
+RUN { \
+  echo 'opcache.enable=1'; \
+  echo 'opcache.enable_cli=1'; \
+  echo 'opcache.validate_timestamps=0'; \
+  echo 'opcache.jit_buffer_size=128M'; \
+  echo 'opcache.jit=tracing'; \
+} > /usr/local/etc/php/conf.d/opcache-recommended.ini
 
 # set working directory
-WORKDIR /var/www/html/sngine
+WORKDIR /var/www/html
 
 # copy project files
-COPY . .
+COPY . /var/www/html
 
 # set server name >> localhost
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
@@ -29,7 +35,7 @@ RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 RUN a2enmod rewrite
 
 # restart server
-RUN service apache2 restart
+# no need to restart; container CMD will start apache
 
 # listen to port 80
 EXPOSE 80

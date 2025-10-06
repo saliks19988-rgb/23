@@ -23,7 +23,7 @@ if (!$system['system_public']) {
 try {
 
   // get view content
-  switch ($_GET['view']) {
+  switch ($view) {
     case '':
 
       // get posts (reels)

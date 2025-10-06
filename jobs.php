@@ -23,8 +23,7 @@ if ($user->_logged_in || !$system['system_public']) {
 try {
 
   // get view content
-  $_GET['view'] = (isset($_GET['view'])) ? $_GET['view'] : '';
-  switch ($_GET['view']) {
+  switch ($view) {
     case '':
       // get promoted jobs
       $promoted_jobs = [];
@@ -198,7 +197,7 @@ try {
   $smarty->assign('rows', $rows);
   $smarty->assign('total', $params['total_items']);
   $smarty->assign('pager', $pager->getPager());
-  $smarty->assign('view', $_GET['view']);
+  $smarty->assign('view', $view);
 
   // get ads
   $ads = $user->ads('jobs');

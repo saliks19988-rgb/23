@@ -26,7 +26,7 @@ try {
   }
 
   // get view content
-  switch ($_GET['view']) {
+  switch ($view) {
     case '':
       // user access
       if ($user->_logged_in || !$system['system_public']) {
@@ -40,7 +40,7 @@ try {
       $smarty->assign('categories', $user->get_categories("events_categories"));
 
       // get new events
-      $events = $user->get_events(['suggested' => true, 'country' => $selected_country['country_id']]);
+      $events = $user->get_events(['suggested' => true, 'country' => ($selected_country['country_id'] ?? null)]);
       /* assign variables */
       $smarty->assign('events', $events);
       $smarty->assign('get', "suggested_events");
@@ -74,7 +74,7 @@ try {
       $smarty->assign('categories', $categories);
 
       // get category events
-      $events = $user->get_events(['suggested' => true, 'category_id' => $_GET['category_id'], 'country' => $selected_country['country_id']]);
+      $events = $user->get_events(['suggested' => true, 'category_id' => $_GET['category_id'], 'country' => ($selected_country['country_id'] ?? null)]);
       /* assign variables */
       $smarty->assign('events', $events);
       $smarty->assign('get', "category_events");
@@ -89,7 +89,7 @@ try {
       page_header(__("Going Events") . ' | ' . __($system['system_title']));
 
       // get going events
-      $events = $user->get_events(['filter' => 'going', 'country' => $selected_country['country_id']]);
+      $events = $user->get_events(['filter' => 'going', 'country' => ($selected_country['country_id'] ?? null)]);
       /* assign variables */
       $smarty->assign('events', $events);
       $smarty->assign('get', "going_events");
@@ -104,7 +104,7 @@ try {
       page_header(__("Interested Events") . ' | ' . __($system['system_title']));
 
       // get interested events
-      $events = $user->get_events(['filter' => 'interested', 'country' => $selected_country['country_id']]);
+      $events = $user->get_events(['filter' => 'interested', 'country' => ($selected_country['country_id'] ?? null)]);
       /* assign variables */
       $smarty->assign('events', $events);
       $smarty->assign('get', "interested_events");
@@ -119,7 +119,7 @@ try {
       page_header(__("Invited Events") . ' | ' . __($system['system_title']));
 
       // get invited events
-      $events = $user->get_events(['filter' => 'invited', 'country' => $selected_country['country_id']]);
+      $events = $user->get_events(['filter' => 'invited', 'country' => ($selected_country['country_id'] ?? null)]);
       /* assign variables */
       $smarty->assign('events', $events);
       $smarty->assign('get', "invited_events");
@@ -134,7 +134,7 @@ try {
       page_header(__("My Events") . ' | ' . __($system['system_title']));
 
       // get events
-      $events = $user->get_events(['managed' => true, 'user_id' => $user->_data['user_id'], 'country' => $selected_country['country_id']]);
+      $events = $user->get_events(['managed' => true, 'user_id' => $user->_data['user_id'], 'country' => ($selected_country['country_id'] ?? null)]);
       /* assign variables */
       $smarty->assign('events', $events);
       $smarty->assign('get', "events");
@@ -146,7 +146,7 @@ try {
       break;
   }
   /* assign variables */
-  $smarty->assign('view', $_GET['view']);
+  $smarty->assign('view', $view);
 } catch (Exception $e) {
   _error(__("Error"), $e->getMessage());
 }

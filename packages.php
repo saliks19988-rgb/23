@@ -17,7 +17,7 @@ if (!$system['packages_enabled']) {
 
 try {
 
-  switch ($_GET['view']) {
+  switch ($view) {
     case 'packages':
       // page header
       page_header(__($system['system_title']) . " &rsaquo; " . __("Packages"));
@@ -47,7 +47,7 @@ try {
 }
 
 // assign varible
-$smarty->assign('view', $_GET['view']);
+$smarty->assign('view', $view);
 
 // page footer
 page_footer('packages');

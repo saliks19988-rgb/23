@@ -18,7 +18,7 @@ if (!$system['developers_apps_enabled'] && !$system['developers_share_enabled'])
 try {
 
   // get view content
-  switch ($_GET['view']) {
+  switch ($view) {
     case '':
       // user access
       if ($user->_logged_in || !$system['system_public']) {
@@ -120,7 +120,7 @@ try {
       break;
   }
   /* assign variables */
-  $smarty->assign('view', $_GET['view']);
+  $smarty->assign('view', $view);
 } catch (Exception $e) {
   _error(__("Error"), $e->getMessage());
 }

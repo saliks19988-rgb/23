@@ -23,7 +23,7 @@ if ($user->_logged_in || !$system['system_public']) {
 try {
 
   // get view content
-  switch ($_GET['view']) {
+  switch ($view) {
     case '':
       // page header
       page_header(__("Directory") . ' | ' . __($system['system_title']), __($system['system_description_directory']));
@@ -227,7 +227,7 @@ try {
       break;
   }
   /* assign variables */
-  $smarty->assign('view', $_GET['view']);
+  $smarty->assign('view', $view);
 
   // get ads campaigns
   $ads_campaigns = $user->ads_campaigns();

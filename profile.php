@@ -123,7 +123,7 @@ try {
 
 
   // [2] get view content
-  switch ($_GET['view']) {
+  switch ($view) {
     case '':
       /* profile completion */
       /* get the step value */
@@ -443,7 +443,7 @@ try {
   }
 
   // [3] profile visit notification
-  if ($_GET['view'] == "" && $user->_logged_in && $system['profile_notification_enabled']) {
+  if ($view == "" && $user->_logged_in && $system['profile_notification_enabled']) {
     $user->post_notification(['to_user_id' => $profile['user_id'], 'action' => 'profile_visit']);
   }
 
@@ -460,7 +460,7 @@ page_header($profile['name'], $profile['user_biography'], $profile['user_picture
 
 // assign variables
 $smarty->assign('profile', $profile);
-$smarty->assign('view', $_GET['view']);
+$smarty->assign('view', $view);
 
 // page footer
 page_footer('profile');

@@ -34,7 +34,7 @@ try {
   }
 
   // get funding requests
-  $smarty->assign('funding_requests', $user->get_funding(['country' => $selected_country['country_id']]));
+  $smarty->assign('funding_requests', $user->get_funding(['country' => ($selected_country['country_id'] ?? null)]));
 } catch (Exception $e) {
   _error(__("Error"), $e->getMessage());
 }
