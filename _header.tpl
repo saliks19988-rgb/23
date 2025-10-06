@@ -158,98 +158,7 @@
 														</a>
 														<!-- zover -->
 														<div class="menu-overlay" id="menuOverlay"></div>
-<script>
-
-document.addEventListener('DOMContentLoaded', () => {
-  const overlay = document.getElementById('menuOverlay');
-  const menu = document.querySelector('.dropdown-menu.x_side_create_menu');
-
-  function openMenu() {
-    // Показываем оверлей
-    overlay.style.display = 'block';
-    overlay.style.opacity = '0.5';
-    
-    // Показываем меню
-    document.querySelector('.dropdown-menu.x_side_create_menu').style.display = 'block';
-    
-    // Блокируем скролл
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeMenu() {
-    // Скрываем оверлей
-    overlay.style.display = 'none';
-    
-    // Скрываем меню
-    document.querySelector('.dropdown-menu.x_side_create_menu').style.display = 'none';
-    
-    // Разблокируем скролл
-    document.body.style.overflow = '';
-  }
-
-  function toggleMenu() {
-    const isVisible = menu.style.display === 'block';
-    if (isVisible) {
-      closeMenu();
-    } else {
-      openMenu();
-    }
-  }
-
-  // Клик по div.openmenu
-  document.body.addEventListener('click', (e) => {
-    const openDiv = e.target.closest('.openmenu');
-    if (openDiv) {
-      e.preventDefault();
-      toggleMenu();
-    } else if (e.target === overlay) {
-      closeMenu();
-    } else if (!menu.contains(e.target)) {
-      if (menu.style.display === 'block') {
-        closeMenu();
-      }
-    }
-  });
-
-  // Закрытие по Escape
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && menu.style.display === 'block') {
-      closeMenu();
-    }
-  });
-});
-
-function toggleMobileUserMenu() {
-    const menu = document.getElementById('mobile-user-menu');
-    const isHidden = menu.classList.contains('hidden');
-    
-    if (isHidden) {
-        menu.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    } else {
-        menu.classList.add('hidden');
-        document.body.style.overflow = '';
-    }
-}
-
-function closeMobileUserMenu() {
-    const menu = document.getElementById('mobile-user-menu');
-    menu.classList.add('hidden');
-    document.body.style.overflow = '';
-}
-
-document.addEventListener('click', function(e) {
-    const menu = document.getElementById('mobile-user-menu');
-    if (e.target === menu) {
-        closeMobileUserMenu();
-    }
-});
-
-function logout() {
-    window.location.href = '{$system["system_url"]}/sign/?do=signout';
-}
-
-</script>
+<!-- scripts consolidated below -->
 
 														<div class="dropdown-menu x_side_create_menu">
 															{if $user->_data['can_publish_posts']}
@@ -349,93 +258,135 @@ function logout() {
 						{include file='_ads.tpl' _ads=$ads_master['header'] _master=true}
 						<!-- ads -->
 
+						<script>
+(function () {
+  const onDomReady = () => {
+    const overlay = document.getElementById('menuOverlay');
+    const menu = document.querySelector('.dropdown-menu.x_side_create_menu');
+    const trigger = document.querySelector('.dropdownMenuButton');
+    if (!menu) return;
 
-<script>
+    const body = document.body;
 
-document.addEventListener('DOMContentLoaded', () => {
-  const triggerEl = document.querySelector('.dropdownMenuButton');
-  const menu = document.querySelector('.x_side_create_menu');
-
-  function openMenu() {
-    if (!triggerEl || !menu) return;
-
-    triggerEl.classList.add('show');
-    triggerEl.setAttribute('aria-expanded', 'true');
-
-    menu.classList.add('show', 'fixed-center');
-    menu.style.position = 'fixed';
-    menu.style.left = '50%';
-    menu.style.bottom = '48px';
-    menu.style.transform = 'translateX(-50%)';
-    menu.style.zIndex = '1050';
-    menu.style.display = 'block';
-    menu.style.width = '100%';
-  }
-
-  function closeMenu() {
-    if (!menu || !triggerEl) return;
-
-    triggerEl.classList.remove('show');
-    triggerEl.setAttribute('aria-expanded', 'false');
-
-    menu.classList.remove('show', 'fixed-center');
-    menu.style.display = 'none';
-  }
-
-  function toggleMenu() {
-    if (menu.classList.contains('show')) {
-      closeMenu();
-    } else {
-      openMenu();
-    }
-  }
-
-  // Клик по div.openmenu
-  document.body.addEventListener('click', (e) => {
-    const openDiv = e.target.closest('.openmenu');
-    if (openDiv) {
-      e.preventDefault();
-      toggleMenu();
-    } else {
-      // Клик вне меню и кнопки — закрываем
-      if (!menu.contains(e.target) && !triggerEl.contains(e.target)) {
-        closeMenu();
+    const setAriaExpanded = (expanded) => {
+      if (trigger) {
+        trigger.classList.toggle('show', expanded);
+        trigger.setAttribute('aria-expanded', String(expanded));
       }
-    }
-  });
-});
+    };
 
-function toggleMobileUserMenu() {
+    const openCreateMenu = () => {
+      setAriaExpanded(true);
+
+      menu.classList.add('show', 'fixed-center');
+      menu.style.position = 'fixed';
+      menu.style.left = '50%';
+      menu.style.bottom = '48px';
+      menu.style.transform = 'translateX(-50%)';
+      menu.style.zIndex = '1050';
+      menu.style.display = 'block';
+      menu.style.width = '100%';
+
+      if (overlay) {
+        overlay.style.display = 'block';
+        overlay.style.opacity = '0.5';
+      }
+      body.style.overflow = 'hidden';
+
+      const firstItem = menu.querySelector('.dropdown-item, [data-toggle="modal"], a, button');
+      if (firstItem && typeof firstItem.focus === 'function') {
+        firstItem.focus();
+      }
+    };
+
+    const closeCreateMenu = () => {
+      setAriaExpanded(false);
+      menu.classList.remove('show', 'fixed-center');
+      menu.style.display = 'none';
+      if (overlay) overlay.style.display = 'none';
+      body.style.overflow = '';
+    };
+
+    const isMenuOpen = () => menu.classList.contains('show') || menu.style.display === 'block';
+
+    const toggleCreateMenu = () => {
+      if (isMenuOpen()) {
+        closeCreateMenu();
+      } else {
+        openCreateMenu();
+      }
+    };
+
+    document.addEventListener('click', (e) => {
+      const clickedOpenDiv = e.target.closest('.openmenu');
+      const clickedTrigger = trigger && (e.target === trigger || trigger.contains(e.target));
+
+      if (clickedOpenDiv || clickedTrigger) {
+        e.preventDefault();
+        toggleCreateMenu();
+        return;
+      }
+
+      if (overlay && e.target === overlay) {
+        closeCreateMenu();
+        return;
+      }
+
+      if (isMenuOpen()) {
+        const clickedInsideMenu = menu.contains(e.target);
+        const clickedInsideTrigger = trigger && trigger.contains(e.target);
+        if (!clickedInsideMenu && !clickedInsideTrigger) {
+          closeCreateMenu();
+        }
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isMenuOpen()) {
+        closeCreateMenu();
+      }
+    });
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', onDomReady);
+  } else {
+    onDomReady();
+  }
+
+  window.toggleMobileUserMenu = function toggleMobileUserMenu() {
     const menu = document.getElementById('mobile-user-menu');
+    if (!menu) return;
     const isHidden = menu.classList.contains('hidden');
-    
     if (isHidden) {
-        menu.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
+      menu.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
     } else {
-        menu.classList.add('hidden');
-        document.body.style.overflow = '';
+      menu.classList.add('hidden');
+      document.body.style.overflow = '';
     }
-}
+  };
 
-function closeMobileUserMenu() {
+  window.closeMobileUserMenu = function closeMobileUserMenu() {
     const menu = document.getElementById('mobile-user-menu');
-    menu.classList.add('hidden');
-    document.body.style.overflow = '';
-}
+    if (menu) {
+      menu.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+  };
 
-document.addEventListener('click', function(e) {
+  document.addEventListener('click', function (e) {
     const menu = document.getElementById('mobile-user-menu');
     if (e.target === menu) {
-        closeMobileUserMenu();
+      window.closeMobileUserMenu();
     }
-});
+  });
 
-function logout() {
+  window.logout = function logout() {
     window.location.href = '{$system["system_url"]}/sign/?do=signout';
-}
-
-</script>
+  };
+})();
+						</script>
 
 <!-- Mobile User Menu Overlay -->
 <div id="mobile-user-menu" class="hidden">
